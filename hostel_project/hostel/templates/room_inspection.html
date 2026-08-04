@@ -1,0 +1,187 @@
+{% include 'header.html' %}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h3 class="fw-bold"><i class="fas fa-clipboard-check text-success me-2"></i> Room Condition Inspection</h3>
+        <p class="text-muted">Visual documentation, inventory checklist, and damage assessment for Check-in & Check-out.</p>
+    </div>
+    {% if user.is_staff %}
+    <div class="col-md-4 text-end">
+        <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#newInspectionModal">
+            <i class="fas fa-plus-circle me-1"></i> Record New Inspection
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% for insp in inspections %}
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center border-bottom-0 pt-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-bed text-primary me-2"></i> Room {{ insp.room_number }}
+                </h5>
+                <span class="badge {% if insp.inspection_type == 'Check-in' %}bg-primary{% else %}bg-danger{% endif %} px-3 py-2">
+                    {{ insp.inspection_type }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-2">
+                    <strong>Student:</strong> {{ insp.student.name }} ({{ insp.student.enrollment_no }})<br/>
+                    <small>Date: {{ insp.inspection_date|date:"d M Y, h:i A" }}</small>
+                </p>
+
+                <div class="row text-center bg-light rounded p-2 my-3 mx-0">
+                    <div class="col-6 col-sm-3 border-end">
+                        <small class="text-muted d-block">Furniture</small>
+                        <strong class="text-dark">{{ insp.furniture_condition }}</strong>
+                    </div>
+                    <div class="col-6 col-sm-3 border-end">
+                        <small class="text-muted d-block">Walls</small>
+                        <strong class="text-dark">{{ insp.wall_condition }}</strong>
+                    </div>
+                    <div class="col-6 col-sm-3 border-end">
+                        <small class="text-muted d-block">Electrical</small>
+                        <strong class="text-dark">{{ insp.electrical_condition }}</strong>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <small class="text-muted d-block">Bathroom</small>
+                        <strong class="text-dark">{{ insp.bathroom_condition }}</strong>
+                    </div>
+                </div>
+
+                <p class="mb-2"><strong>Inventory Checklist:</strong> <span class="badge bg-secondary">{{ insp.inventory_checklist }}</span></p>
+
+                {% if insp.damage_notes %}
+                <div class="alert alert-warning p-2 small mb-2">
+                    <strong><i class="fas fa-exclamation-triangle"></i> Damage Notes:</strong> {{ insp.damage_notes }}<br/>
+                    <strong>Damage Charges:</strong> <span class="text-danger fw-bold">PKR {{ insp.damage_charges }}</span>
+                </div>
+                {% endif %}
+
+                {% if insp.photo_1 or insp.photo_2 %}
+                <div class="d-flex gap-2 mt-3">
+                    {% if insp.photo_1 %}
+                    <a href="{{ insp.photo_1.url }}" target="_blank">
+                        <img src="{{ insp.photo_1.url }}" class="img-thumbnail" style="width: 100px; height: 80px; object-fit: cover;" alt="Room Photo 1" />
+                    </a>
+                    {% endif %}
+                    {% if insp.photo_2 %}
+                    <a href="{{ insp.photo_2.url }}" target="_blank">
+                        <img src="{{ insp.photo_2.url }}" class="img-thumbnail" style="width: 100px; height: 80px; object-fit: cover;" alt="Room Photo 2" />
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card border-0 shadow-sm p-5 text-center text-muted">
+            <i class="fas fa-camera fa-3x mb-3 text-secondary"></i>
+            <h5>No Room Inspections Recorded</h5>
+            <p>Check-in and Check-out room condition inspections will appear here.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- New Inspection Modal -->
+{% if user.is_staff %}
+<div class="modal fade" id="newInspectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{% url 'room_inspections' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check me-2"></i> Record Room Inspection</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Select Student</label>
+                            <select name="student_id" class="form-select" required>
+                                {% for s in students %}
+                                <option value="{{ s.id }}">{{ s.name }} (Room {{ s.room_no }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Inspection Type</label>
+                            <select name="inspection_type" class="form-select" required>
+                                <option value="Check-in">Check-in Inspection (Joining)</option>
+                                <option value="Check-out">Check-out Inspection (Leaving)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Furniture</label>
+                            <select name="furniture_condition" class="form-select">
+                                <option value="Good">Good</option>
+                                <option value="Minor Damage">Minor Damage</option>
+                                <option value="Damaged">Damaged</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Walls</label>
+                            <select name="wall_condition" class="form-select">
+                                <option value="Good">Good</option>
+                                <option value="Stained/Scratched">Stained/Scratched</option>
+                                <option value="Damaged">Damaged</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Electrical</label>
+                            <select name="electrical_condition" class="form-select">
+                                <option value="Good">Good</option>
+                                <option value="Faulty">Faulty</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Bathroom</label>
+                            <select name="bathroom_condition" class="form-select">
+                                <option value="Clean & Functional">Clean & Functional</option>
+                                <option value="Needs Repair">Needs Repair</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Inventory Checklist</label>
+                        <input type="text" name="inventory_checklist" class="form-control" value="Bed, Desk, Chair, Fan, Light, Wardrobe" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Room Photo 1</label>
+                            <input type="file" name="photo_1" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Room Photo 2</label>
+                            <input type="file" name="photo_2" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Damage Notes (If applicable)</label>
+                            <textarea name="damage_notes" class="form-control" rows="2" placeholder="Record any broken items or wall damage..."></textarea>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Damage Charges (PKR)</label>
+                            <input type="number" step="0.01" name="damage_charges" class="form-control" value="0.00" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success px-4">Save Inspection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% include 'footer.html' %}

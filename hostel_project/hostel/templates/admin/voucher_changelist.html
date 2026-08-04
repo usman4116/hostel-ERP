@@ -1,0 +1,17 @@
+{% extends "admin/change_list.html" %}
+
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="/superadmin/hostel/companysettings/" class="btn btn-secondary" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 6px; font-weight: bold; padding: 6px 15px; margin-right: 10px;">
+            Set AC Unit Rate
+        </a>
+    </li>
+    <li>
+        <a href="generate-batch/" class="btn btn-primary" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; border: none; border-radius: 6px; font-weight: bold; padding: 6px 15px;">
+            Auto-Generate For All
+        </a>
+    </li>
+{% endblock %}

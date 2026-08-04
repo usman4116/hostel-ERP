@@ -1,0 +1,75 @@
+{% include 'header.html' %}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h3 class="fw-bold"><i class="fas fa-file-invoice-dollar text-primary me-2"></i> Monthly Payment Vouchers</h3>
+        <p class="text-muted">Automated 30-day billing vouchers generated based on enrollment joining dates.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Voucher #</th>
+                        {% if user.is_staff %}<th>Student</th>{% endif %}
+                        <th>Billing Cycle</th>
+                        <th>Due Date</th>
+                        <th>Rent</th>
+                        <th>Electricity</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th class="text-center">Download PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voucher in vouchers %}
+                    <tr>
+                        <td>
+                            <strong class="text-primary">#{{ voucher.voucher_no }}</strong>
+                        </td>
+                        {% if user.is_staff %}
+                        <td>
+                            <strong>{{ voucher.student.name }}</strong><br/>
+                            <small class="text-muted">{{ voucher.student.enrollment_no }} | Room {{ voucher.student.room_no }}</small>
+                        </td>
+                        {% endif %}
+                        <td>{{ voucher.billing_cycle_start|date:"d M" }} - {{ voucher.billing_cycle_end|date:"d M Y" }}</td>
+                        <td>
+                            <span class="fw-bold text-danger">{{ voucher.due_date|date:"d M Y" }}</span>
+                        </td>
+                        <td>PKR {{ voucher.rent_amount }}</td>
+                        <td>PKR {{ voucher.electricity_charges }}</td>
+                        <td><strong class="text-dark fs-6">PKR {{ voucher.total_amount }}</strong></td>
+                        <td>
+                            {% if voucher.status == 'Paid' %}
+                                <span class="badge bg-success px-3 py-2"><i class="fas fa-check-circle me-1"></i> Paid</span>
+                            {% elif voucher.status == 'Overdue' %}
+                                <span class="badge bg-danger px-3 py-2"><i class="fas fa-exclamation-circle me-1"></i> Overdue</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark px-3 py-2"><i class="fas fa-clock me-1"></i> Unpaid</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'download_voucher' voucher.id %}" class="btn btn-sm btn-outline-danger shadow-sm fw-bold">
+                                <i class="fas fa-file-pdf me-1"></i> PDF Voucher
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">
+                            <i class="fas fa-receipt fa-3x mb-3 d-block text-secondary"></i>
+                            No vouchers generated yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

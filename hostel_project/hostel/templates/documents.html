@@ -1,0 +1,133 @@
+{% include 'header.html' %}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h3 class="fw-bold"><i class="fas fa-folder-open text-primary me-2"></i> Student Document Management</h3>
+        <p class="text-muted">Upload and manage required hostel documentation (Photograph, CNIC, Agreements, Forms).</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+            <i class="fas fa-upload me-1"></i> Upload New Document
+        </button>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        {% if user.is_staff %}<th>Student</th>{% endif %}
+                        <th>Document Type</th>
+                        <th>File Name</th>
+                        <th>Uploaded Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        {% if user.is_staff %}
+                        <td class="fw-bold">{{ doc.student.name }} <br/><small class="text-muted">{{ doc.student.enrollment_no }}</small></td>
+                        {% endif %}
+                        <td>
+                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                            <strong>{{ doc.get_doc_type_display }}</strong>
+                        </td>
+                        <td>{{ doc.file.name }}</td>
+                        <td>{{ doc.uploaded_at|date:"d M Y" }}</td>
+                        <td>
+                            {% if doc.expiry_date %}
+                                {{ doc.expiry_date|date:"d M Y" }}
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if doc.verification_status == 'Verified' %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Verified</span>
+                            {% elif doc.verification_status == 'Rejected' %}
+                                <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i> Rejected</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Pending Verification</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary me-1" title="Preview / Download">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'delete_document' doc.id %}" onclick="return confirm('Are you sure you want to remove this document?');" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="fas fa-folder-open fa-3x mb-3 d-block text-secondary"></i>
+                            No documents uploaded yet. Click <strong>Upload New Document</strong> above.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Document Modal -->
+<div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'upload_document' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-upload me-2"></i> Upload Student Document</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if user.is_staff %}
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Select Student</label>
+                        <select name="student_id" class="form-select" required>
+                            {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.name }} ({{ student.room_no }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Document Type</label>
+                        <select name="doc_type" class="form-select" required>
+                            <option value="Photograph">Student Photograph</option>
+                            <option value="CNIC_Front">CNIC / Passport (Front)</option>
+                            <option value="CNIC_Back">CNIC / Passport (Back)</option>
+                            <option value="Guardian_CNIC">Parent / Guardian CNIC</option>
+                            <option value="Admission_Form">Admission Form</option>
+                            <option value="Hostel_Agreement">Hostel Agreement Form (Signed PDF/Image)</option>
+                            <option value="Emergency_Contact">Emergency Contact Information</option>
+                            <option value="Supporting_Doc">Supporting Document</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Select File (PDF / Image)</label>
+                        <input type="file" name="file" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label font-weight-bold">Document Expiry Date (Optional)</label>
+                        <input type="date" name="expiry_date" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">Upload Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}

@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "hostel_project/hostel_project/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/hostel_project/hostel_project/wsgi.py"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/hostel_project/hostel_project/wsgi.py"
+    },
+    {
+      "source": "/static/(.*)",
+      "destination": "/hostel_project/hostel_project/wsgi.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}
