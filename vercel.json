@@ -20,7 +20,7 @@
       "destination": "/hostel_project/hostel_project/wsgi.py"
     },
     {
-      "source": "/admin/(.*)",
+      "source": "/django-admin/(.*)",
       "destination": "/hostel_project/hostel_project/wsgi.py"
     },
     {

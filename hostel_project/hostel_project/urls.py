@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from hostel import views
 
 urlpatterns = [
-    path('superadmin/', admin.site.urls),
+    path('django-admin/', admin.site.urls),
     path('', views.student_login, name='home'),
     path('login/', views.student_login, name='login'),
     path('logout/', views.student_logout, name='logout'),
