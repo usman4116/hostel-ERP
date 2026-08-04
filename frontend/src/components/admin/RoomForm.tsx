@@ -36,7 +36,7 @@ export function RoomForm({ open, onOpenChange, room }: RoomFormProps) {
   const isEditing = !!room;
 
   const form = useForm<RoomFormValues>({
-    resolver: zodResolver(roomSchema),
+    resolver: zodResolver(roomSchema) as any,
     defaultValues: {
       building_name: room?.building_name || "Main Block",
       floor: room?.floor || 1,

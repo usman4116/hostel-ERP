@@ -34,7 +34,7 @@ export function VisitorForm({ open, onOpenChange, visitor }: VisitorFormProps) {
   const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students/').then(res => res.data) });
 
   const form = useForm<VisitorFormValues>({
-    resolver: zodResolver(visitorSchema),
+    resolver: zodResolver(visitorSchema) as any,
     defaultValues: {
       visitor_name: visitor?.visitor_name || "",
       student: visitor?.student?.id || visitor?.student || 0,

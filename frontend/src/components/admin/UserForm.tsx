@@ -34,7 +34,7 @@ export function UserForm({ open, onOpenChange, user }: UserFormProps) {
   const isEditing = !!user;
 
   const form = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(userSchema) as any,
     defaultValues: {
       username: user?.username || "",
       password: "",

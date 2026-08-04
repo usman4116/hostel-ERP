@@ -35,8 +35,8 @@ export function ComplaintForm({ open, onOpenChange, complaint }: ComplaintFormPr
 
   const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students/').then(res => res.data) });
 
-  const form = useForm({
-    resolver: zodResolver(complaintSchema),
+  const form = useForm<ComplaintFormValues>({
+    resolver: zodResolver(complaintSchema) as any,
     defaultValues: {
       student: complaint?.student?.id || complaint?.student || 0,
       subject: complaint?.subject || "",

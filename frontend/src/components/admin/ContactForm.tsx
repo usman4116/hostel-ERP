@@ -32,7 +32,7 @@ export function ContactForm({ open, onOpenChange, contact }: ContactFormProps) {
   const isEditing = !!contact;
 
   const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(contactSchema) as any,
     defaultValues: {
       name: contact?.name || "",
       mobile_number: contact?.mobile_number || "",

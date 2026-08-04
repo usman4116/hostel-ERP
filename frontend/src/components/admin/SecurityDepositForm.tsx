@@ -35,7 +35,7 @@ export function SecurityDepositForm({ open, onOpenChange, deposit }: SecurityDep
   const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students/').then(res => res.data) });
 
   const form = useForm<DepositFormValues>({
-    resolver: zodResolver(depositSchema),
+    resolver: zodResolver(depositSchema) as any,
     defaultValues: {
       student: deposit?.student?.id || deposit?.student || 0,
       deposit_received: deposit?.deposit_received || 5000,

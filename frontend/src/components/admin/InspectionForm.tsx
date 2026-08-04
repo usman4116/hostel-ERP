@@ -41,7 +41,7 @@ export function InspectionForm({ open, onOpenChange, inspection }: InspectionFor
   const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students/').then(res => res.data) });
 
   const form = useForm<InspectionFormValues>({
-    resolver: zodResolver(inspectionSchema),
+    resolver: zodResolver(inspectionSchema) as any,
     defaultValues: {
       student: inspection?.student?.id || inspection?.student || 0,
       room_number: inspection?.room_number || "",

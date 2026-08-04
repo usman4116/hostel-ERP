@@ -105,7 +105,7 @@ export function ContractForm({ isOpen, onClose, contract }: ContractFormProps) {
             <Label>Student</Label>
             <Select 
               value={studentId} 
-              onValueChange={setStudentId}
+              onValueChange={(val) => setStudentId(val || "")}
               disabled={!!contract} // Cannot change student if editing
             >
               <SelectTrigger>

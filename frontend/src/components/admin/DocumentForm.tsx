@@ -35,7 +35,7 @@ export function DocumentForm({ open, onOpenChange, document: editingDoc }: Docum
   const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students/').then(res => res.data) });
 
   const form = useForm<DocumentFormValues>({
-    resolver: zodResolver(documentSchema),
+    resolver: zodResolver(documentSchema) as any,
     defaultValues: {
       student: editingDoc?.student?.id || editingDoc?.student || 0,
       doc_type: editingDoc?.doc_type || "CNIC_Front",

@@ -40,7 +40,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
   const { data: rooms = EMPTY_ARRAY } = useQuery({ queryKey: ['rooms'], queryFn: () => api.get('/rooms/').then(res => res.data) });
 
   const form = useForm<StudentFormValues>({
-    resolver: zodResolver(studentSchema),
+    resolver: zodResolver(studentSchema) as any,
     defaultValues: {
       user: student?.user?.id || student?.user || 0,
       phone_no: student?.phone || "",

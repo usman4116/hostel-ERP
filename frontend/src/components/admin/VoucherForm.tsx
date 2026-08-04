@@ -44,7 +44,7 @@ export function VoucherForm({ open, onOpenChange, voucher }: VoucherFormProps) {
   });
 
   const form = useForm<VoucherFormValues>({
-    resolver: zodResolver(voucherSchema),
+    resolver: zodResolver(voucherSchema) as any,
     defaultValues: {
       student: "",
       enrollment_date: new Date().toISOString().split('T')[0],

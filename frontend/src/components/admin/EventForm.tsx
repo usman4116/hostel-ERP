@@ -39,7 +39,7 @@ export function EventForm({ open, onOpenChange, event }: EventFormProps) {
   });
 
   const form = useForm<EventFormValues>({
-    resolver: zodResolver(eventSchema),
+    resolver: zodResolver(eventSchema) as any,
     defaultValues: {
       title: event?.title || "",
       event_type: event?.event_type || "Rent Due",

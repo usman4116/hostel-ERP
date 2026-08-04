@@ -30,7 +30,7 @@ export function StudentComplaintForm({ open, onOpenChange, studentId }: StudentC
   const queryClient = useQueryClient();
 
   const form = useForm<ComplaintFormValues>({
-    resolver: zodResolver(complaintSchema),
+    resolver: zodResolver(complaintSchema) as any,
     defaultValues: {
       subject: "",
       msg: "",

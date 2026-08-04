@@ -30,7 +30,7 @@ export function LeaveNoticeForm({ open, onOpenChange, studentId }: LeaveNoticeFo
   const queryClient = useQueryClient();
 
   const form = useForm<LeaveNoticeFormValues>({
-    resolver: zodResolver(leaveNoticeSchema),
+    resolver: zodResolver(leaveNoticeSchema) as any,
     defaultValues: {
       planned_leaving_date: "",
       reason: "",
