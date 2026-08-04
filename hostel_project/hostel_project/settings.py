@@ -37,7 +37,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hostel_project.settings.ApiTrailingSlashMiddleware',
 ]
+
+class ApiTrailingSlashMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+    def __call__(self, request):
+        if request.path_info.startswith('/api/') and not request.path_info.endswith('/'):
+            request.path_info += '/'
+        return self.get_response(request)
 
 ROOT_URLCONF = 'hostel_project.urls'
 
