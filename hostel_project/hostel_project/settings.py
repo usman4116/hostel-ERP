@@ -10,6 +10,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*'] # In production on Vercel, this is usually fine, or you can restrict it to os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.up.railway.app',
+    'https://*.railway.app',
+    'https://*.vercel.app',
+]
+
 CORS_ALLOW_ALL_ORIGINS = True # Simplify CORS for Vercel deployment, or use CORS_ALLOWED_ORIGINS
 
 INSTALLED_APPS = [
